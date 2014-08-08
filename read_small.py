@@ -2,9 +2,13 @@ import icalendar,sys
 import pytz
 import dataset
 
-with open('smallcal.ics','rb') as f:
+with open('allcourses.ics','rb') as f:
     cal = icalendar.Calendar.from_ical(f.read())
 
+## with open('smallcal.ics','rb') as f:
+##     cal = icalendar.Calendar.from_ical(f.read())
+    
+    
 for k,v in cal.items():
     print(k,v)
 
@@ -16,30 +20,35 @@ def make_dict(event):
     start_utc=item['DTSTART'].dt.astimezone(pytz.utc).timestamp()
     end=item['DTEND'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
     end_utc=item['DTEND'].dt.astimezone(pytz.utc).timestamp()
-    out=dict(summary=item['SUMMARY'].to_ical(),
+    if 'BYDAY' in item['RRULE']:
+        days=repr(item['RRULE']['BYDAY'])
+    else:
+        print('no BYDAY in {}'.format(event['SUMMARY'].to_ical().decode('utf-8')))
+        days='NaN'
+    out=dict(summary=item['SUMMARY'].to_ical().decode('utf-8'),
              dept=dept,
              course=course,
              section=section,
-             location=item['LOCATION'].to_ical(),
-             category=item['CATEGORIES'].to_ical(),
-             days=repr(item['RRULE']['BYDAY']),
+             location=item['LOCATION'].to_ical().decode('utf-8'),
+             category=item['CATEGORIES'].to_ical().decode('utf-8'),
              last=last,
              frequency=frequency,
+             days=days,
              start=start,
              start_utc=start_utc,
              end=end,
              end_utc=end_utc)
     return out
 
-dbname='courses.db'
+dbname='small_courses.db'
+dbname='all_courses.db'
 dbstring='sqlite:///{:s}'.format(dbname)
 db = dataset.connect(dbstring)
 
 table_name='times'
 if table_name in db.tables:
-    print('dropping {}'.format(table_name))
-    table_raw=db.metadata.tables[table_name]
-    table_raw.drop()
+    print("dropping table {}".format(table_name))
+    db[table_name].drop()
     db.engine.connect().close()
     db = dataset.connect(dbstring)
 
@@ -50,12 +59,13 @@ the_list=[]
 the_cal=icalendar.Calendar
 for item in cal.walk():
     count+=1
-    try:
-        out=make_dict(item)
-        the_table.insert(out)
-        print(out)
-    except Exception as e:
-        print(e)
-        pass
+    if isinstance(item,icalendar.cal.Event):
+        try:
+            out=make_dict(item)
+            the_table.insert(out)
+            print(count)
+        except Exception as e:
+            print("caught exception: ",type(e),e.args,e)
+            raise e
     if count > 50000:
         break
