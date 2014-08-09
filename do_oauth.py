@@ -65,22 +65,47 @@ event = {
   ],
 }
 
+from collections import defaultdict
 
-event = {
-  'summary': 'Appointment',
-  'location': 'Somewhere',
-  'start': {
-    'dateTime': '2014-09-03T10:00:00.000-07:00',
-    'timeZone': 'America/Los_Angeles'
-  },
-  'end': {
-    'dateTime': '2014-09-03T10:25:00.000-07:00',
-    'timeZone': 'America/Los_Angeles'
-  },
-  "recurrence": [
-    "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",
-  ],
-}    
+event=defaultdict(dict)
+
+event['summary']='Appointment'
+event['location']='Somewhere'
+event['start'] = dict(dateTime='2014-09-03T10:00:00-07:00',
+                     timeZone='America/Los_Angeles')
+event['end'] = dict(dateTime='2014-09-03T10:25:00-07:00',
+                   timeZone= 'America/Los_Angeles')
+
+event["recurrence"]= ["RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",]
+
+
+## event['summary']='Appointment'    
+## event['location']= 'Somewhere'
+## event['start']['datetime']='2014-09-03T10:00:00-07:00'
+## event['start']['timeZone']='America/Los_Angeles'
+## event['end']['datetime']='2014-09-03T10:25:00-07:00'
+## event['end']['timeZone']='America/Los_Angeles'
+## event['recurrance']=["RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",]
+
+import pprint
+pp=pprint.PrettyPrinter(indent=4)
+pp.pprint(event)
+
+## event = {
+##   'summary': 'Appointment',
+##   'location': 'Somewhere',
+##   'start': {
+##     'dateTime': '2014-09-03T10:00:00-07:00',
+##     'timeZone': 'America/Los_Angeles'
+##   },
+##   'end': {
+##     'dateTime': '2014-09-03T10:25:00-07:00',
+##     'timeZone': 'America/Los_Angeles'
+##   },
+##   "recurrence": [
+##     "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",
+##   ],
+## }    
 
     
 created_event = service.events().insert(calendarId=the_id, body=event).execute()
