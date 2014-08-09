@@ -42,8 +42,9 @@ def make_dict(event):
              end_utc=end_utc)
     return out
 
-dbname='small_courses.db'
 dbname='old_and_new_courses.db'
+dbname='old_and_new_courses.db'
+dbname='all_courses.db'
 dbstring='sqlite:///{:s}'.format(dbname)
 db = dataset.connect(dbstring)
 
