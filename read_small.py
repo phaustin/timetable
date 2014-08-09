@@ -2,7 +2,7 @@ import icalendar,sys
 import pytz
 import dataset
 
-with open('allcourses.ics','rb') as f:
+with open('old_and_new.ics','rb') as f:
     cal = icalendar.Calendar.from_ical(f.read())
 
 ## with open('smallcal.ics','rb') as f:
