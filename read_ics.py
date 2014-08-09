@@ -1,8 +1,22 @@
-import icalendar,sys
+import icalendar,sys,datetime
 import pytz
 import dataset
+import rfc3339
 
-with open('old_and_new.ics','rb') as f:
+
+EPOCH = datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
+def timestamp(dt):
+    """
+      given datetime object in utc
+      return unix timestamp
+    """
+    dt=dt.astimezone(datetime.timezone.utc)
+    return (dt - EPOCH).total_seconds()
+
+
+#with open('old_and_new.ics','rb') as f:
+with open('smallcal.ics','rb') as f:
     cal = icalendar.Calendar.from_ical(f.read())
 
 ## with open('smallcal.ics','rb') as f:
@@ -14,11 +28,13 @@ for k,v in cal.items():
 
 def make_dict(event):
     dept,course,section=item['SUMMARY'].split()
-    last=item['RRULE']['UNTIL'][0].strftime('%Y-%m-%dT%H:%M:%S%z')
+    last=rfc3339(item['RRULE']['UNTIL'][0])
     frequency=item['RRULE']['FREQ'][0]
-    start=item['DTSTART'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+    #format fo ical
+    #start=item['DTSTART'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+    start=rfc3339(item['DTSTART'].dt)
     start_utc=item['DTSTART'].dt.astimezone(pytz.utc).timestamp()
-    end=item['DTEND'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+    end=rfc3339(item['DTEND'].dt)
     end_utc=item['DTEND'].dt.astimezone(pytz.utc).timestamp()
     rrule_text=item['RRULE'].to_ical().decode('utf-8')
     if 'BYDAY' in item['RRULE']:
