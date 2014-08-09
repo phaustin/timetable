@@ -21,4 +21,4 @@ slots=[]
 for item in phys_courses:
     slots.append(dict(zip(columns,item)))
     
-
+print slots
