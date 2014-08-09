@@ -20,6 +20,7 @@ def make_dict(event):
     start_utc=item['DTSTART'].dt.astimezone(pytz.utc).timestamp()
     end=item['DTEND'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
     end_utc=item['DTEND'].dt.astimezone(pytz.utc).timestamp()
+    rrule_text=item['RRULE'].to_ical().decode('utf-8')
     if 'BYDAY' in item['RRULE']:
         days=repr(item['RRULE']['BYDAY'])
     else:
@@ -31,6 +32,7 @@ def make_dict(event):
              section=section,
              location=item['LOCATION'].to_ical().decode('utf-8'),
              category=item['CATEGORIES'].to_ical().decode('utf-8'),
+             rrule_text=rrule_text,
              last=last,
              frequency=frequency,
              days=days,
@@ -41,7 +43,7 @@ def make_dict(event):
     return out
 
 dbname='small_courses.db'
-dbname='all_courses.db'
+dbname='old_and_new_courses.db'
 dbstring='sqlite:///{:s}'.format(dbname)
 db = dataset.connect(dbstring)
 
@@ -67,5 +69,5 @@ for item in cal.walk():
         except Exception as e:
             print("caught exception: ",type(e),e.args,e)
             raise e
-    if count > 50000:
-        break
+    ## if count > 50000:
+    ##     break
