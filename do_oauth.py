@@ -49,6 +49,8 @@ created_calendar = service.calendars().insert(body=calendar).execute()
 
 the_id=created_calendar['id']
 
+
+
 event = {
   'summary': 'PHYS 203',
   'location': 'HEBB 200',
@@ -58,12 +60,29 @@ event = {
   'end': {
     'dateTime': '2015-01-06T11:00:00-08:00'
   },
-  'recurrence': [
-    'RRULE:FREQ=WEEKLY;UNTIL=20150410T180000Z;BYDAY=TU,TH',
-  ]
+    'recurrence': [
+    'RRULE:FREQ=WEEKLY;UNTIL=20150401T100000-08:00',
+  ],
 }
 
 
+event = {
+  'summary': 'Appointment',
+  'location': 'Somewhere',
+  'start': {
+    'dateTime': '2014-09-03T10:00:00.000-07:00',
+    'timeZone': 'America/Los_Angeles'
+  },
+  'end': {
+    'dateTime': '2014-09-03T10:25:00.000-07:00',
+    'timeZone': 'America/Los_Angeles'
+  },
+  "recurrence": [
+    "RRULE:FREQ=DAILY;COUNT=5",
+  ],
+}    
+
+    
 created_event = service.events().insert(calendarId=the_id, body=event).execute()
 
 rule = {
