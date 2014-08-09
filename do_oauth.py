@@ -78,7 +78,7 @@ event = {
     'timeZone': 'America/Los_Angeles'
   },
   "recurrence": [
-    "RRULE:FREQ=DAILY;COUNT=5",
+    "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;COUNT=10",
   ],
 }    
 
