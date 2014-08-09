@@ -50,21 +50,6 @@ created_calendar = service.calendars().insert(body=calendar).execute()
 the_id=created_calendar['id']
 
 
-
-event = {
-  'summary': 'PHYS 203',
-  'location': 'HEBB 200',
-  'start': {
-    'dateTime': '2015-01-06T09:30:00-08:00'
-  },
-  'end': {
-    'dateTime': '2015-01-06T11:00:00-08:00'
-  },
-    'recurrence': [
-    'RRULE:FREQ=WEEKLY;UNTIL=20150401T100000-08:00',
-  ],
-}
-
 from collections import defaultdict
 
 event=defaultdict(dict)
@@ -77,35 +62,6 @@ event['end'] = dict(dateTime='2014-09-03T10:25:00-07:00',
                    timeZone= 'America/Los_Angeles')
 
 event["recurrence"]= ["RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",]
-
-
-## event['summary']='Appointment'    
-## event['location']= 'Somewhere'
-## event['start']['datetime']='2014-09-03T10:00:00-07:00'
-## event['start']['timeZone']='America/Los_Angeles'
-## event['end']['datetime']='2014-09-03T10:25:00-07:00'
-## event['end']['timeZone']='America/Los_Angeles'
-## event['recurrance']=["RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",]
-
-import pprint
-pp=pprint.PrettyPrinter(indent=4)
-pp.pprint(event)
-
-## event = {
-##   'summary': 'Appointment',
-##   'location': 'Somewhere',
-##   'start': {
-##     'dateTime': '2014-09-03T10:00:00-07:00',
-##     'timeZone': 'America/Los_Angeles'
-##   },
-##   'end': {
-##     'dateTime': '2014-09-03T10:25:00-07:00',
-##     'timeZone': 'America/Los_Angeles'
-##   },
-##   "recurrence": [
-##     "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20150410T230000Z",
-##   ],
-## }    
 
     
 created_event = service.events().insert(calendarId=the_id, body=event).execute()
