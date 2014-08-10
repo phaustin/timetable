@@ -65,7 +65,7 @@ while True:
     sleep(0.5)
     calendar_list = service.calendarList().list(pageToken=page_token).execute()
     for calendar_list_entry in calendar_list['items']:
-        if calendar_list_entry['summary']=='newphysics':
+        if calendar_list_entry['summary']=='austin.eoas@gmail.com':
             print(calendar_list_entry['summary'])
             print(calendar_list_entry['id'])
             sleep(0.5)
@@ -92,6 +92,7 @@ for course in slots:
                          timeZone='America/Los_Angeles')
     event['end'] = dict(dateTime=course['end'],
                        timeZone= 'America/Los_Angeles')
+    event['colorId']='7'
     event["recurrence"]= ["RRULE:{}".format(course['rrule_text']),]
     sleep(0.5)
     created_event = service.events().insert(calendarId=the_id, body=event).execute()
@@ -117,3 +118,17 @@ for the_week in ['2013T1','2013T2','2014T1','2014T2']:
     query= urllib.urlencode({'src':the_id,'ctz':'America/Vancouver','mode':'WEEK','dates':week_dates})
     print('to view: {}: {}'.format(the_week,uri + query))
 
+## colors = service.colors().get().execute()
+
+## # Print available calendarListEntry colors.
+## for id, color in colors['calendar'].items():
+##   print('colorId: %s' % id)
+##   print('  Background: %s' % color['background'])
+##   print('  Foreground: %s' % color['foreground'])
+## # Print(available event colors)
+## for id, color in colors['event'].items():
+##   print('colorId: %s' % id)
+##   print('  Background: %s' % color['background'])
+##   print('  Foreground: %s' % color['foreground'])
+  
+  
