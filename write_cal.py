@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 import dataset
 from sqlalchemy import and_, or_, join
+from time import sleep
 
 db_name='old_and_new_courses.db'
 dbstring='sqlite:///{:s}'.format(db_name)
@@ -47,32 +48,37 @@ service = __create_service()
 
 page_token = None
 
+## #https://developers.google.com/google-apps/calendar/v3/reference/calendars/insert
+
+calendar = {
+    'summary': 'newphysics',
+    'timeZone': 'America/Los_Angeles'
+}
+    
+#created_calendar = service.calendars().insert(body=calendar).execute()
+
+
 #
 # clear all physics calendars
 #
 while True:
+    sleep(0.5)
     calendar_list = service.calendarList().list(pageToken=page_token).execute()
     for calendar_list_entry in calendar_list['items']:
-        if calendar_list_entry['summary']=='physics':
+        if calendar_list_entry['summary']=='newphysics':
             print(calendar_list_entry['summary'])
             print(calendar_list_entry['id'])
-            print('found physics will delete')
-            service.calendars().delete(calendarId=calendar_list_entry['id']).execute()
+            sleep(0.5)
+            the_id=calendar_list_entry['id']
+            events = service.events().list(calendarId=the_id, pageToken=page_token).execute()
+            for row,item in enumerate(events['items']):
+                print("delete: ",item)
+                service.events().delete(calendarId=the_id, eventId=item['id']).execute()
         page_token = calendar_list.get('nextPageToken')
     if not page_token:
         break
 
 
-## #https://developers.google.com/google-apps/calendar/v3/reference/calendars/insert
-
-calendar = {
-    'summary': 'physics',
-    'timeZone': 'America/Los_Angeles'
-}
-    
-created_calendar = service.calendars().insert(body=calendar).execute()
-
-the_id=created_calendar['id']
 
 
 from collections import defaultdict
@@ -87,6 +93,7 @@ for course in slots:
     event['end'] = dict(dateTime=course['end'],
                        timeZone= 'America/Los_Angeles')
     event["recurrence"]= ["RRULE:{}".format(course['rrule_text']),]
+    sleep(0.5)
     created_event = service.events().insert(calendarId=the_id, body=event).execute()
 
 rule = {
@@ -99,15 +106,14 @@ rule = {
 created_rule = service.acl().insert(calendarId=the_id, body=rule).execute()
 
 uri='https://www.google.com/calendar/embed?'
-dates='20150115/20150116'
-query= urllib.urlencode({'src':the_id,'ctz':'America/Vancouver','mode':'WEEK','dates':dates})
 
-print('to view: click on: ',uri + query)
+dates={'2014T2':'20150115/20150116',
+       '2014T1':'20140915/20140916',
+       '2013T1':'20130915/20130916',
+       '2013T2':'20140115/20140116'}
 
-## ## print created_rule['id']
-
-## ## print "event: ",created_event['id']
-
-## ## print(service)
-
+for the_week in ['2013T1','2013T2','2014T1','2014T2']:
+    week_dates=dates[the_week]    
+    query= urllib.urlencode({'src':the_id,'ctz':'America/Vancouver','mode':'WEEK','dates':week_dates})
+    print('to view: {}: {}'.format(the_week,uri + query))
 
