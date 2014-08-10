@@ -54,3 +54,4 @@ docs/_build/
 
 *.ics
 *.db
+.ipynb_checkpoints/*
